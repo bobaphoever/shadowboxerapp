@@ -16,21 +16,31 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         private lateinit var stopButton: Button
         private lateinit var textToSpeech: TextToSpeech
 
-        private val combos = arrayOf(
-                "Roll",
-                "Catch",
-                "Block",
-                "Pull",
-                "Slip",
-                "Shoulder",
-                "Top",
-                "Body",
-                "Left-Block",
-                "Tripple",
-                "Tripple-SLip",
-                "Double Hook",
-                "Base"
-                // Add more combos as needed
+        data class ComboWithDelay(val combo: String, val delayMillis: Long)
+
+        private val combos = listOf(
+                ComboWithDelay("Roll", 1300),
+                ComboWithDelay("Catch", 1300),
+                ComboWithDelay("Block", 1300),
+                ComboWithDelay("Pull", 1300),
+                ComboWithDelay("Slip", 1300),
+                ComboWithDelay("Shoulder", 1300),
+                ComboWithDelay("Top", 1000),
+                ComboWithDelay("Body", 1500),
+                ComboWithDelay("Left-Block", 1300),
+                ComboWithDelay("Tripple", 1600),
+                ComboWithDelay("Slip-3", 1700),
+                ComboWithDelay("Double-Hook", 1200),
+                ComboWithDelay("Base", 1500),
+                ComboWithDelay("Slip-2", 1400),
+                ComboWithDelay("Roll-2", 1500),
+                ComboWithDelay("1 2 Roll", 1600),
+                ComboWithDelay("Touch", 2200),
+                ComboWithDelay("Hook", 2200),
+                ComboWithDelay("3-Cross", 2500),
+                ComboWithDelay("Liver", 2200)
+
+                // Add more combos with specific delays as needed
         )
 
         private var isRunning = false
@@ -90,10 +100,10 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 val runnable = object : Runnable {
                         override fun run() {
                                 if (isRunning) {
-                                        val randomCombo = getRandomCombo()
-                                        comboTextView.text = randomCombo
-                                        textToSpeech.speak(randomCombo, TextToSpeech.QUEUE_FLUSH, null, null)
-                                        handler.postDelayed(this, 1300)
+                                        val comboWithDelay = getRandomCombo()
+                                        comboTextView.text = comboWithDelay.combo
+                                        textToSpeech.speak(comboWithDelay.combo, TextToSpeech.QUEUE_FLUSH, null, null)
+                                        handler.postDelayed(this, comboWithDelay.delayMillis)
                                 }
                         }
                 }
@@ -101,7 +111,7 @@ class MainActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 handler.post(runnable)
         }
 
-        private fun getRandomCombo(): String {
+        private fun getRandomCombo(): ComboWithDelay {
                 val randomIndex = (0 until combos.size).random()
                 return combos[randomIndex]
         }
